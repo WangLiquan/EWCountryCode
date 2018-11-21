@@ -44,6 +44,8 @@ class EWCountryCodeViewController: UIViewController {
         sortedNameDict = NSDictionary(contentsOfFile: path ?? "") as? Dictionary<String, Any>
         indexArray = Array(sortedNameDict!.keys).sorted(by: {$0 < $1})
     }
+
+    
     func showCodeStringIndex(indexPath: NSIndexPath) -> String{
         var showCodeString: String = ""
         if searchController!.isActive{
