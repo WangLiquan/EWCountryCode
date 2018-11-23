@@ -11,7 +11,7 @@ import UIKit
 class EWCountryCodeViewController: UIViewController {
 
     public var backCountryCode: ((String, String)->())?
-    private var tableView: UITableView = UITableView(frame: CGRect(x: 0, y: ScreenInfo.navigationHeight, width: ScreenInfo.Width, height: ScreenInfo.Height - ScreenInfo.navigationHeight))
+    private var tableView: UITableView = UITableView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
     private var searchController: UISearchController?
     private var sortedNameDict: Dictionary<String, Any>?
     private var indexArray: Array<String>?
@@ -21,7 +21,7 @@ class EWCountryCodeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "SelectCountry".localizedString()
+        self.title = "选择国家/地区"
         self.drawMyView()
         // Do any additional setup after loading the view.
     }
@@ -37,7 +37,7 @@ class EWCountryCodeViewController: UIViewController {
         searchController?.searchResultsUpdater = self
         searchController?.dimsBackgroundDuringPresentation = false
         searchController?.hidesNavigationBarDuringPresentation = false
-        searchController?.searchBar.placeholder = "Search".localizedString()
+        searchController?.searchBar.placeholder = "Search"
         searchController?.searchBar.setValue("cancel".localizedString(), forKey:"_cancelButtonText")
         tableView.tableHeaderView = searchController?.searchBar
         let path = Bundle.main.path(forResource: "sortedName".localizedString(), ofType: "plist")
