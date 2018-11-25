@@ -8,6 +8,17 @@
 
 import UIKit
 
+fileprivate func getCurrentLanguage() -> String {
+    let preferredLang = Bundle.main.preferredLocalizations.first! as NSString
+    switch String(describing: preferredLang) {
+    case "en-US", "en-CN":
+        return "en"//英文
+    case "zh-Hans-US","zh-Hans-CN","zh-Hant-CN","zh-TW","zh-HK","zh-Hans":
+        return "cn"//中文
+    default:
+        return "en"
+    }
+}
 class EWCountryCodeViewController: UIViewController {
 
     public var backCountryCode: ((String, String)->())?
@@ -21,11 +32,12 @@ class EWCountryCodeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "选择国家/地区"
+        self.title = isLanguageEnglish() ? "Country/Location" : "选择国家/地区"
         self.drawMyView()
         // Do any additional setup after loading the view.
     }
     private func drawMyView(){
+        self.view.backgroundColor = UIColor.white
         self.view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
@@ -38,9 +50,11 @@ class EWCountryCodeViewController: UIViewController {
         searchController?.dimsBackgroundDuringPresentation = false
         searchController?.hidesNavigationBarDuringPresentation = false
         searchController?.searchBar.placeholder = "Search"
-        searchController?.searchBar.setValue("cancel".localizedString(), forKey:"_cancelButtonText")
+        let cancel: String = isLanguageEnglish() ? "Cancel" : "取消"
+        searchController?.searchBar.setValue(cancel, forKey:"_cancelButtonText")
         tableView.tableHeaderView = searchController?.searchBar
-        let path = Bundle.main.path(forResource: "sortedName".localizedString(), ofType: "plist")
+        let sortedName = isLanguageEnglish() ? "sortedNameEN" : "sortedNameCH"
+        let path = Bundle.main.path(forResource: sortedName, ofType: "plist")
         sortedNameDict = NSDictionary(contentsOfFile: path ?? "") as? Dictionary<String, Any>
         indexArray = Array(sortedNameDict!.keys).sorted(by: {$0 < $1})
     }
@@ -74,8 +88,13 @@ class EWCountryCodeViewController: UIViewController {
         searchController?.isActive = false
         searchController?.searchBar.resignFirstResponder()
         self.dismiss(animated: true, completion: nil)
-
+        self.navigationController?.popViewController(animated: true)
     }
+
+    private func isLanguageEnglish() -> Bool{
+        return getCurrentLanguage() == "en" ? true : false
+    }
+    
 }
 
 extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource{
@@ -134,7 +153,7 @@ extension EWCountryCodeViewController: UISearchResultsUpdating{
         let array: Array<Array<String>> = Array(sortedNameDict!.values) as! Array<Array<String>>
         for (_, obj) in array.enumerated() {
             for (_, obj) in obj.enumerated() {
-                if obj.containsIgnoringCase(find: inputText ?? ""){
+                if obj.contains(inputText ?? ""){
                     self.results.append(obj)
                 }
             }
