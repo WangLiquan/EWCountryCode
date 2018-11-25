@@ -44,6 +44,7 @@ class EWCountryCodeViewController: UIViewController {
         tableView.backgroundColor = UIColor.clear
         tableView.autoresizingMask = .flexibleWidth
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "identifier")
+        /// 当searchResultsController为nil则意味着搜索结果使用原tableView展示
         searchController = UISearchController(searchResultsController: nil)
         searchController?.searchResultsUpdater = self
         searchController?.dimsBackgroundDuringPresentation = false
@@ -86,7 +87,6 @@ class EWCountryCodeViewController: UIViewController {
         }
         searchController?.isActive = false
         searchController?.searchBar.resignFirstResponder()
-        self.dismiss(animated: true, completion: nil)
         self.navigationController?.popViewController(animated: true)
     }
 
