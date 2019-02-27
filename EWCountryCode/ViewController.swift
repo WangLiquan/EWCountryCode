@@ -35,7 +35,7 @@ class ViewController: UIViewController {
         label.text = "地区"
         return label
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "demo"
@@ -45,7 +45,7 @@ class ViewController: UIViewController {
         self.view.addSubview(showButton)
     }
 
-    @objc private func onClickShowButton(){
+    @objc private func onClickShowButton() {
         let vc = EWCountryCodeViewController()
         vc.backCountryCode = { [weak self] country, code in
             self?.showCountryLabel.text = country
@@ -55,4 +55,3 @@ class ViewController: UIViewController {
     }
 
 }
-

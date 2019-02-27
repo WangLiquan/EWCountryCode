@@ -8,7 +8,7 @@
 
 import UIKit
 /// 获取系统语言方法
-fileprivate func getCurrentLanguage() -> String {
+private func getCurrentLanguage() -> String {
     let preferredLang = Bundle.main.preferredLocalizations.first! as NSString
     switch String(describing: preferredLang) {
     case "en-US", "en-CN":
@@ -21,21 +21,21 @@ fileprivate func getCurrentLanguage() -> String {
 }
 class EWCountryCodeViewController: UIViewController {
     /// 选中国家后的闭包回调
-    public var backCountryCode: ((String, String)->())?
+    public var backCountryCode: ((String, String) -> Void)?
     private var tableView: UITableView = UITableView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
     private var searchController: UISearchController?
-    private var sortedNameDict: Dictionary<String, Any>?
-    private var indexArray: Array<String>?
+    private var sortedNameDict: [String: Any]?
+    private var indexArray: [String]?
     /// 筛选出后的结果array
-    private var results: Array<Any> = Array()
-    
+    private var results: [Any] = Array()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = isLanguageEnglish() ? "Country/Location" : "选择国家/地区"
         self.drawMyView()
         // Do any additional setup after loading the view.
     }
-    private func drawMyView(){
+    private func drawMyView() {
         self.view.backgroundColor = UIColor.white
         self.view.addSubview(tableView)
         tableView.delegate = self
@@ -56,27 +56,27 @@ class EWCountryCodeViewController: UIViewController {
         /// 从plist文件中获取数据并存储
         let sortedName = isLanguageEnglish() ? "sortedNameEN" : "sortedNameCH"
         let path = Bundle.main.path(forResource: sortedName, ofType: "plist")
-        sortedNameDict = NSDictionary(contentsOfFile: path ?? "") as? Dictionary<String, Any>
+        sortedNameDict = NSDictionary(contentsOfFile: path ?? "") as? [String: Any]
         indexArray = Array(sortedNameDict!.keys).sorted(by: {$0 < $1})
     }
     /// 从存储数据中获取每条的国家+区号String
-    private func showCodeStringIndex(indexPath: NSIndexPath) -> String{
+    private func showCodeStringIndex(indexPath: NSIndexPath) -> String {
         var showCodeString: String = ""
-        if searchController!.isActive{
-            if results.count > indexPath.row{
-                showCodeString = results[indexPath.row] as! String
+        if searchController!.isActive {
+            if results.count > indexPath.row {
+                showCodeString = results[indexPath.row] as? String ?? ""
             }
-        }else{
-            if indexArray!.count > indexPath.section{
-                let sectionArray: Array<String> = sortedNameDict?[indexArray?[indexPath.section] ?? ""] as! Array<String>
-                if sectionArray.count > indexPath.row{
+        } else {
+            if indexArray!.count > indexPath.section {
+                let sectionArray: [String] = sortedNameDict?[indexArray?[indexPath.section] ?? ""] as? [String] ?? [""]
+                if sectionArray.count > indexPath.row {
                     showCodeString = sectionArray[indexPath.row]
                 }
             }
         }
         return showCodeString
     }
-    private func selectCodeIndex(indexPath: IndexPath){
+    private func selectCodeIndex(indexPath: IndexPath) {
         let originText = self.showCodeStringIndex(indexPath: indexPath as NSIndexPath)
         let array = originText.components(separatedBy: "+")
         let countryName = array.first?.trimmingCharacters(in: CharacterSet.whitespaces)
@@ -90,16 +90,16 @@ class EWCountryCodeViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
 
-    private func isLanguageEnglish() -> Bool{
+    private func isLanguageEnglish() -> Bool {
         return getCurrentLanguage() == "en" ? true : false
     }
-    
+
 }
 
-extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource{
+extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         if (searchController!.isActive) {
-            return 1;
+            return 1
         } else {
             return sortedNameDict?.keys.count ?? 0
         }
@@ -107,9 +107,9 @@ extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchController!.isActive {
             return results.count
-        }else {
-            if indexArray!.count > section{
-                let array: Array<String> = sortedNameDict?[indexArray![section]] as! Array<String>
+        } else {
+            if indexArray!.count > section {
+                let array: [String] = sortedNameDict?[indexArray![section]] as? [String] ?? [""]
                 return array.count
             }
         }
@@ -144,17 +144,17 @@ extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource{
         self.selectCodeIndex(indexPath: indexPath)
     }
 }
-extension EWCountryCodeViewController: UISearchResultsUpdating{
+extension EWCountryCodeViewController: UISearchResultsUpdating {
     /// searchResults代理方法，将搜索到的内容加入resultArray 赋给tableView
     func updateSearchResults(for searchController: UISearchController) {
-        if results.count > 0 {
+        if results .isEmpty {
             results.removeAll()
         }
         let inputText = searchController.searchBar.text
-        let array: Array<Array<String>> = Array(sortedNameDict!.values) as! Array<Array<String>>
-        for (_, obj) in array.enumerated() {
-            for (_, obj) in obj.enumerated() {
-                if obj.contains(inputText ?? ""){
+        let array: [[String]] = Array(sortedNameDict!.values) as? [[String]] ?? [[""]]
+        for obj in array {
+            for obj in obj {
+                if obj.contains(inputText ?? "") {
                     self.results.append(obj)
                 }
             }
