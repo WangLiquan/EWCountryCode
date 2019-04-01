@@ -1,6 +1,7 @@
 # EWCountryCode
+[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+
 一个选择国家/地区获取区号的控制器
-----
 
 # 实现功能：
 * 中英文双语，根据系统语言获取不同源内容，以及不同的提示语言。
