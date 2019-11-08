@@ -47,11 +47,11 @@ class EWCountryCodeViewController: UIViewController {
         /// 当searchResultsController为nil则意味着搜索结果使用原tableView展示
         searchController = UISearchController(searchResultsController: nil)
         searchController?.searchResultsUpdater = self
-        searchController?.dimsBackgroundDuringPresentation = false
-        searchController?.hidesNavigationBarDuringPresentation = false
+        searchController?.obscuresBackgroundDuringPresentation = false
+//        searchController?.hidesNavigationBarDuringPresentation = false
         searchController?.searchBar.placeholder = isLanguageEnglish() ? "Search" : "搜索"
         let cancel: String = isLanguageEnglish() ? "Cancel" : "取消"
-        searchController?.searchBar.setValue(cancel, forKey:"_cancelButtonText")
+        searchController?.searchBar.setValue(cancel, forKey:"cancelButtonText")
         tableView.tableHeaderView = searchController?.searchBar
         /// 从plist文件中获取数据并存储
         let sortedName = isLanguageEnglish() ? "sortedNameEN" : "sortedNameCH"
@@ -147,7 +147,7 @@ extension EWCountryCodeViewController:UITableViewDelegate,UITableViewDataSource 
 extension EWCountryCodeViewController: UISearchResultsUpdating {
     /// searchResults代理方法，将搜索到的内容加入resultArray 赋给tableView
     func updateSearchResults(for searchController: UISearchController) {
-        if results .isEmpty {
+        if !results.isEmpty {
             results.removeAll()
         }
         let inputText = searchController.searchBar.text
